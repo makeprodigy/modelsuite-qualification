@@ -35,6 +35,25 @@ const fmtDate = (raw) => {
   } catch { return raw; }
 };
 
+/* ── Deadline urgency badge ──
+   Shown inline next to the due date on each task card. */
+const DeadlineBadge = ({ dueDate }) => {
+  if (!dueDate) return null;
+  const due = new Date(dueDate);
+  if (isNaN(due)) return null;
+  const now = new Date();
+  const diffMs = due - now;
+  const diffHours = diffMs / (1000 * 60 * 60);
+
+  if (diffMs < 0) {
+    return <span className="badge-overdue">⚠ Overdue</span>;
+  }
+  if (diffHours <= 24) {
+    return <span className="badge-due-soon">⏰ Due Soon</span>;
+  }
+  return null;
+};
+
 const MyTasksList = ({ tasks, onRefresh }) => {
   const [submitTarget, setSubmitTarget] = useState(null);
 
@@ -76,6 +95,7 @@ const MyTasksList = ({ tasks, onRefresh }) => {
                 <p className="flex items-center gap-1.5 text-[11.5px]" style={{ color: '#4B5563' }}>
                   <IconCalendar />
                   Due {fmtDate(task.dueDate)}
+                  <DeadlineBadge dueDate={task.dueDate} />
                 </p>
               )}
             </div>

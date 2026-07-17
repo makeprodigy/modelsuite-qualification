@@ -13,6 +13,26 @@ const IconDelete = () => (
   </svg>
 );
 
+/* ── Deadline urgency badge ──
+   Shows "Overdue" (pulsing red) or "Due Soon" (orange) based on dueDate.
+   Due Soon = due within the next 24 hours but not yet passed. */
+const DeadlineBadge = ({ dueDate }) => {
+  if (!dueDate) return null;
+  const due = new Date(dueDate);
+  if (isNaN(due)) return null;
+  const now = new Date();
+  const diffMs = due - now;
+  const diffHours = diffMs / (1000 * 60 * 60);
+
+  if (diffMs < 0) {
+    return <span className="badge-overdue">⚠ Overdue</span>;
+  }
+  if (diffHours <= 24) {
+    return <span className="badge-due-soon">⏰ Due Soon</span>;
+  }
+  return null;
+};
+
 /* ── Avatar color map ── */
 const AVATAR_COLORS = [
   'linear-gradient(135deg,#3B82F6,#2563EB)',
@@ -127,7 +147,10 @@ const TasksTable = ({ tasks, onEdit, onRefresh }) => {
 
               {/* Due date */}
               <td className="table-td" style={{ color: '#6B7280', whiteSpace: 'nowrap' }}>
-                {fmtDate(task.dueDate)}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span>{fmtDate(task.dueDate)}</span>
+                  <DeadlineBadge dueDate={task.dueDate} />
+                </div>
               </td>
 
               {/* Created */}
