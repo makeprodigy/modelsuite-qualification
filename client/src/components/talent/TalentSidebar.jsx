@@ -27,7 +27,6 @@ const IconLogout = () => (
 
 const navItems = [
   { label: 'My Dashboard', path: '/talent/dashboard', Icon: IconDashboard },
-  { label: 'My Tasks',     path: '/talent/tasks',     Icon: IconTasks     },
 ];
 
 const TalentSidebar = () => {
