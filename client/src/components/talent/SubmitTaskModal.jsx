@@ -1,9 +1,18 @@
-﻿import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { submitTask } from '../../api/submissions';
 
 const SubmitTaskModal = ({ task, onClose, onSubmitted }) => {
   const [file, setFile]   = useState(null);
   const [notes, setNotes] = useState('');
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -23,8 +32,8 @@ const SubmitTaskModal = ({ task, onClose, onSubmitted }) => {
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/65 backdrop-blur-sm flex items-center justify-center z-[200] p-6"
+  const modalContent = (
+    <div className="fixed inset-0 bg-black/65 backdrop-blur-sm flex items-center justify-center z-[9999] p-6"
       onClick={onClose}>
       <div className="bg-bg-card border border-border rounded-xl w-full max-w-lg shadow-[0_32px_80px_rgba(0,0,0,0.6)] animate-modal-in"
         onClick={(e) => e.stopPropagation()}>
@@ -62,7 +71,6 @@ const SubmitTaskModal = ({ task, onClose, onSubmitted }) => {
                 <>
                   <span className="text-xl">⬆</span>
                   <span className="text-[13px] text-text-muted">Click to choose a file</span>
-                  
                 </>
               )}
             </label>
@@ -91,6 +99,8 @@ const SubmitTaskModal = ({ task, onClose, onSubmitted }) => {
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default SubmitTaskModal;
