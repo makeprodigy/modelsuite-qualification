@@ -1,45 +1,53 @@
-﻿const Submission = require('../models/Submission');
+const Submission = require('../models/Submission');
 const Task = require('../models/Task');
 
 // @desc  Submit a task with a file upload
 // @route POST /api/submissions/:taskId
-// @access Talent (protect middleware only — no role check)
+// @access Auth (Talent)
 const submitTask = async (req, res) => {
   const { taskId } = req.params;
   const { notes } = req.body;
 
   try {
-    // — any authenticated user can submit for any task
-    // — a talent can "submit" an Open or Approved task
+    // Check if the talent has already submitted for this task.
+    // We block re-submissions to prevent accidental data loss.
+    const existingSubmission = await Submission.findOne({
+      taskId,
+      talentId: req.user._id,
+    });
 
-    // Build the file URL from multer's saved file
-    // with a different PORT or base URL
-    const fileUrl = req.file
-      ? `http://localhost:5000/uploads/${req.file.filename}`
-      : req.body.fileUrl || null;
-    // — no audit trail of re-submissions
-    let submission = await Submission.findOne({ taskId, talentId: req.user._id });
-
-    if (submission) {
-      // Overwrite: update in place
-      submission.fileUrl = fileUrl;
-      submission.notes = notes;
-      await submission.save();
-    } else {
-      submission = await Submission.create({
-        taskId,
-        talentId: req.user._id,
-        fileUrl,
-        notes,
+    if (existingSubmission) {
+      return res.status(409).json({
+        message: 'You have already submitted this task. Re-submissions are not allowed.',
       });
     }
 
-    // Update task status to Submitted
+    // Build the file URL from multer's saved file.
+    // Port 5001: macOS AirPlay Receiver occupies port 5000 on macOS Monterey+
+    const fileUrl = req.file
+      ? `http://localhost:5001/uploads/${req.file.filename}`
+      : req.body.fileUrl || null;
+
+    const submission = await Submission.create({
+      taskId,
+      talentId: req.user._id,
+      fileUrl,
+      notes,
+    });
+
+    // Mark the task as Submitted
     await Task.findByIdAndUpdate(taskId, { status: 'Submitted' });
 
-    res.status(201).json(submission);
+    return res.status(201).json(submission);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    // Catch MongoDB duplicate key error as a secondary safety net
+    // in case two concurrent requests slip past the application-layer check.
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: 'You have already submitted this task. Re-submissions are not allowed.',
+      });
+    }
+    return res.status(500).json({ message: error.message });
   }
 };
 
