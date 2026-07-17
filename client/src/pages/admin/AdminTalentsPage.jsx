@@ -11,7 +11,7 @@ const AdminTalentsPage = () => {
     try {
       const { data } = await API.get('/users/talents');
       setTalents(data);
-    } catch (err) {
+    } catch {
       setError('Failed to load talents');
     } finally {
       setLoading(false);
@@ -19,6 +19,7 @@ const AdminTalentsPage = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadTalents();
   }, []);
 

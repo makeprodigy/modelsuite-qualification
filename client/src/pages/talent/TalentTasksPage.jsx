@@ -32,7 +32,7 @@ const TalentTasksPage = () => {
     try {
       const { data } = await fetchMyTasks();
       setTasks(data);
-    } catch (err) {
+    } catch {
       setError('Failed to load tasks');
     } finally {
       setLoading(false);
@@ -40,6 +40,7 @@ const TalentTasksPage = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadTasks();
   }, []);
 
