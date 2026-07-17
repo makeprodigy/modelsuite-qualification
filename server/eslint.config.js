@@ -18,5 +18,8 @@ module.exports = defineConfig([
         require: 'readonly',
       },
     },
+    rules: {
+      'no-unused-vars': ['error', { caughtErrors: 'none' }],
+    },
   },
 ])
