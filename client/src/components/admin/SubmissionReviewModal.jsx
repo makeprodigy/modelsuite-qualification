@@ -1,4 +1,4 @@
-﻿import { reviewSubmission } from '../../api/submissions';
+import { reviewSubmission } from '../../api/submissions';
 
 const REVIEW_STATUS_CLASS = {
   Pending:  'status-badge-Submitted',
@@ -9,6 +9,14 @@ const REVIEW_STATUS_CLASS = {
 const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
 
   const handleReview = async (status) => {
+    // Rejecting a submission is a destructive, high-impact action — require confirmation.
+    if (status === 'Rejected') {
+      const confirmed = window.confirm(
+        `Reject submission by ${submission.talentId?.name || 'this talent'}?\n\nThis will mark their submission as Rejected. Are you sure?`
+      );
+      if (!confirmed) return;
+    }
+
     try {
       await reviewSubmission(submission._id, status);
       onReviewed();

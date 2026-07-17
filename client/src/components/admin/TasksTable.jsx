@@ -63,7 +63,13 @@ const STATUS_CLASS = {
 
 const TasksTable = ({ tasks, onEdit, onRefresh }) => {
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, title) => {
+    // Confirm before permanently deleting — destructive action cannot be undone.
+    const confirmed = window.confirm(
+      `Delete task "${title}"?\n\nThis will also remove all submissions linked to it. This action cannot be undone.`
+    );
+    if (!confirmed) return;
+
     try {
       await deleteTask(id);
       onRefresh();
@@ -168,7 +174,7 @@ const TasksTable = ({ tasks, onEdit, onRefresh }) => {
                     <IconEdit />
                   </button>
                   <button
-                    onClick={() => handleDelete(task._id)}
+                    onClick={() => handleDelete(task._id, task.title)}
                     title="Delete task"
                     className="action-btn action-btn-delete">
                     <IconDelete />
