@@ -1,6 +1,7 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  // Temporarily changed for local demo recording (macOS port 5000 issue)
+  baseURL: 'http://localhost:5001/api',
 });
 
 // Attach token to every request

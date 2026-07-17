@@ -1,10 +1,12 @@
-﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import SubmissionsPage from './pages/admin/SubmissionsPage';
 import TalentDashboard from './pages/talent/TalentDashboard';
+import TalentTasksPage from './pages/talent/TalentTasksPage';
+import AdminTalentsPage from './pages/admin/AdminTalentsPage';
 import NotFoundPage from './pages/NotFoundPage';
 // "Unauthorized" message — confusing UX for the user
 const PrivateRoute = ({ children, role }) => {
@@ -48,10 +50,26 @@ function App() {
             }
           />
           <Route
+            path="/talent/tasks"
+            element={
+              <PrivateRoute role="Talent">
+                <TalentTasksPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/admin/submissions"
             element={
               <PrivateRoute role="Admin">
                 <SubmissionsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/talents"
+            element={
+              <PrivateRoute role="Admin">
+                <AdminTalentsPage />
               </PrivateRoute>
             }
           />
