@@ -5,6 +5,31 @@ import MyTasksList from '../../components/talent/MyTasksList';
 import { fetchAvailableTasks, fetchMyTasks } from '../../api/talent';
 import { useAuth } from '../../context/AuthContext';
 
+/* ── Icons ── */
+const IconActive = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+  </svg>
+);
+
+const IconSubmitted = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+  </svg>
+);
+
+const IconApproved = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/>
+  </svg>
+);
+
+const IconAvailable = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>
+  </svg>
+);
+
 /* ── Circular progress ring ── */
 const RingProgress = ({ value, max, color, size = 56, stroke = 5 }) => {
   const r = (size - stroke * 2) / 2;
@@ -25,7 +50,7 @@ const RingProgress = ({ value, max, color, size = 56, stroke = 5 }) => {
 };
 
 /* ── Single stat card with ring ── */
-const StatCard = ({ label, value, total, color, emoji }) => (
+const StatCard = ({ label, value, total, color, Icon }) => (
   <div style={{
     background: 'rgba(255,255,255,0.025)',
     border: '1px solid rgba(255,255,255,0.07)',
@@ -44,8 +69,10 @@ const StatCard = ({ label, value, total, color, emoji }) => (
       <RingProgress value={value} max={total} color={color} />
       <span style={{
         position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
-        justifyContent: 'center', fontSize: '18px',
-      }}>{emoji}</span>
+        justifyContent: 'center', color: color,
+      }}>
+        <Icon />
+      </span>
     </div>
     <div>
       <p style={{ fontSize: '24px', fontWeight: 700, color, fontFamily: 'Poppins, sans-serif', lineHeight: 1 }}>
@@ -129,7 +156,7 @@ const TalentDashboard = () => {
               {getGreeting()}
             </p>
             <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#F0F0F0', fontFamily: 'Poppins, sans-serif', margin: 0, lineHeight: 1.2 }}>
-              {firstName} 👋
+              {firstName} <span style={{ display: 'inline-block', animation: 'wave 2s infinite', transformOrigin: '70% 70%' }}>👋</span>
             </h1>
             <p style={{ fontSize: '13.5px', color: '#6B7280', fontFamily: 'Inter, sans-serif', marginTop: '6px' }}>
               {totalTasks === 0
@@ -143,11 +170,11 @@ const TalentDashboard = () => {
           </div>
 
           {/* Stats row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '12px' }}>
-            <StatCard label="Active"    value={inProgress} total={Math.max(totalTasks, 1)} color="#60A5FA" emoji="🎯" />
-            <StatCard label="Submitted" value={submitted}  total={Math.max(totalTasks, 1)} color="#A78BFA" emoji="📤" />
-            <StatCard label="Approved"  value={approved}   total={Math.max(totalTasks, 1)} color="#34D399" emoji="✅" />
-            <StatCard label="Available" value={availableTasks.length} total={Math.max(availableTasks.length, 1)} color="#F59E0B" emoji="📋" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+            <StatCard label="Active"    value={inProgress} total={Math.max(totalTasks, 1)} color="#60A5FA" Icon={IconActive} />
+            <StatCard label="Submitted" value={submitted}  total={Math.max(totalTasks, 1)} color="#A78BFA" Icon={IconSubmitted} />
+            <StatCard label="Approved"  value={approved}   total={Math.max(totalTasks, 1)} color="#34D399" Icon={IconApproved} />
+            <StatCard label="Available" value={availableTasks.length} total={Math.max(availableTasks.length, 1)} color="#F59E0B" Icon={IconAvailable} />
           </div>
         </section>
 
