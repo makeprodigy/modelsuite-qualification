@@ -176,6 +176,7 @@ jobs:
     if: ${{ always() && (needs['test-client'].result == 'success' || needs['test-client'].result == 'skipped') && (needs['test-server'].result == 'success' || needs['test-server'].result == 'skipped') && (needs['test-client'].result == 'success' || needs['test-server'].result == 'success') }}
     permissions:
       pull-requests: write
+      issues: write
       contents: read
     steps:
       - name: Post success comment
